@@ -114,102 +114,127 @@ public class ConvertToPDFSQLActivity extends AppCompatActivity {
             Cursor cursor = sqLiteDatabase.query("PdfTABLE", column, null, null, null, null, null);
             cursor.move(cursor.getCount());
 
-
-            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(2580, 3500, 1).create();
+            /*
+             for A4 size sheet width = 20.98 and height = 29.66, builder below used POST SCRIPT as unit
+             which in turn is defined as 1/72 inch
+            so divide the STANDARD WIDTH and HEIGHT in CM by 2.54 [result inch]
+            multiply the value by 72 to get POST SCRIPT value
+            Width = 20.98 cm for A4
+            Height  = 29.66 cm for A4
+            POSTSCRIPT width =  20.98 / 2.54 = 8.26 => 8.26 * 72 = 594.70 => 595 int
+            POSTSCRIPT height = 29.66 / 2.54 = 11.67 => 11.67 * 72 = 840.75 => 841 int
+             */
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 841, 1).create();
             PdfDocument.Page page = pdfDocument.startPage(pageInfo);
 
             Canvas canvas = page.getCanvas();
 
             //first text
-            paint.setTextSize(100);
-            canvas.drawText("Custom Builds", 50, 80, paint);
+            paint.setTextSize(20);
+            canvas.drawText("Custom Builds", 250, 30, paint);
 
             //second text
-            paint.setTextSize(60);
-            canvas.drawText("#21, Rajeev Gandhi Nagar, Nandini Layout, Bengaluru 96", 50, 150, paint);
+            paint.setTextSize(10);
+            canvas.drawText("#21, Rajeev Gandhi Nagar, Nandini Layout, Bengaluru 96", 200, 45, paint);
 
-            //
             paint.setTextAlign(Paint.Align.RIGHT);
-            canvas.drawText("Invoice Number", canvas.getWidth() - 200, 100, paint);
-            canvas.drawText(String.valueOf(cursor.getInt(0)), canvas.getWidth() - 50, 100, paint);
+            canvas.drawText("Invoice Number", canvas.getWidth() - 50, 30, paint);
+
+            canvas.drawText(String.valueOf(cursor.getInt(0)), canvas.getWidth() - 30, 30, paint);
             paint.setTextAlign(Paint.Align.LEFT);
 
             paint.setColor(Color.rgb(150, 150, 150));
-            canvas.drawRect(75, 180, canvas.getWidth() - 30, 200, paint);
+            canvas.drawRect(30, 50, canvas.getWidth() - 30, 55, paint);
 
             paint.setColor(Color.BLACK);
-            canvas.drawText("Date :", 100, 250, paint);
-            canvas.drawText(dateFormat.format(cursor.getLong(3)), 300, 250, paint);
+            canvas.drawText("Date :", 30, 70, paint);
+            canvas.drawText(dateFormat.format(cursor.getLong(3)), 70, 70, paint);
 
-            canvas.drawText("Time :", 800, 250, paint);
-            //paint.setTextAlign(Paint.Align.RIGHT);
+            canvas.drawText("Time :", 150, 70, paint);
             //canvas.drawText(timeFormat.format(cursor.getLong(3)), canvas.getWidth() - 40, 200, paint);
-            canvas.drawText(timeFormat.format(cursor.getLong(3)), 1200, 250, paint);
+            canvas.drawText(timeFormat.format(cursor.getLong(3)), 180, 70, paint);
             paint.setTextAlign(Paint.Align.LEFT);
-
-
 
             // billing from
             paint.setColor(Color.rgb(150, 150, 150));
-            canvas.drawRect(50, 270, 300, 330, paint);
+            canvas.drawRect(30, 80, 80, 95, paint);
 
             paint.setColor(Color.WHITE);
-            canvas.drawText("FROM", 50, 320, paint);
+            canvas.drawText("FROM", 32, 90, paint);
 
             paint.setColor(Color.BLACK);
-            canvas.drawText("KIRAN R ", 50, 400, paint);
-            canvas.drawText("CUSTOM BUILDS TECHNOLOGY", 50, 475, paint);
-            canvas.drawText("NANDINI LAYOUT, BENGALURU 96", 50, 550, paint);
-            canvas.drawText("MOBILE NUMBER: 9739942971", 50, 625, paint);
+            canvas.drawText("KIRAN R ", 30, 105, paint);
+            canvas.drawText("CUSTOM BUILDS TECHNOLOGY", 30, 120, paint);
+            canvas.drawText("NANDINI LAYOUT, BENGALURU 96", 30, 135, paint);
+            canvas.drawText("MOBILE NUMBER: 9739942971", 30, 150, paint);
             paint.setTextAlign(Paint.Align.RIGHT);
+
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            canvas.drawText("GST IN: 29JVVPK7688R1ZL", canvas.getWidth() - 200, 550, paint);
+            canvas.drawText("GST IN: 29JVVPK7688R1ZL", canvas.getWidth() - 30, 120, paint);
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
 
             // billing to
             paint.setTextAlign(Paint.Align.LEFT);
+
             paint.setColor(Color.rgb(150, 150, 150));
-            canvas.drawRect(50, 710, 300, 790, paint);
+            canvas.drawRect(30, 170, 80, 182, paint);
 
             paint.setColor(Color.WHITE);
-            canvas.drawText("BILL TO", 50, 770, paint);
+            canvas.drawText("BILL TO", 32, 180, paint);
 
             paint.setColor(Color.BLACK);
-            canvas.drawText("Customer Name:", 50, 850, paint);
-            canvas.drawText(cursor.getString(1), 600, 850, paint);
+            canvas.drawText("Customer Name:", 30, 195, paint);
+            canvas.drawText(cursor.getString(1), 150, 195, paint);
 
-            canvas.drawText("Mobile Number:", 50, 920, paint);
-            canvas.drawText(cursor.getString(2), 600, 920, paint);
+            canvas.drawText("Mobile Number:", 30, 210, paint);
+            canvas.drawText(cursor.getString(2), 150, 210, paint);
 
-            canvas.drawText("Address:", 50, 990, paint);
-            canvas.drawText(cursor.getString(2), 600, 990, paint);
+            canvas.drawText("Address:", 30, 225, paint);
+            canvas.drawText(cursor.getString(2), 150, 225, paint);
             paint.setTextAlign(Paint.Align.LEFT);
+
+            // draw vertical line
+            paint.setColor(Color.rgb(150, 150, 150));
+            canvas.drawRect(75, 265, 78, 280, paint);
+            canvas.drawRect(150, 265, 153, 280, paint);
+            canvas.drawRect(275, 265, 278, 280, paint);
 
             // create rectangular bar
             paint.setColor(Color.rgb(150, 150, 150));
-            canvas.drawRect(30, 1050, canvas.getWidth() - 40, 1130, paint);
+            canvas.drawRect(30, 250, canvas.getWidth() - 40, 270, paint);
 
             paint.setColor(Color.WHITE);
-            canvas.drawText("Item", 50, 1115, paint);
-            canvas.drawText("Qty", 550, 1115, paint);
-            canvas.drawText("Amount", 1050, 1115, paint);
+            canvas.drawText("Item", 35, 265, paint);
+            canvas.drawText("Qty", 100, 265, paint);
+            canvas.drawText("Amount", 190, 265, paint);
 
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
             paint.setColor(Color.BLACK);
-            canvas.drawText(cursor.getString(4), 50, 1200, paint);
-            canvas.drawText(String.valueOf(cursor.getInt(5)), 550, 1200, paint);
-            canvas.drawText(String.valueOf(cursor.getInt(6)), 1050, 1200, paint);
+            canvas.drawText(cursor.getString(4), 35, 280, paint);
+            canvas.drawText(String.valueOf(cursor.getInt(5)), 100, 280, paint);
+            canvas.drawText(String.valueOf(cursor.getInt(6)), 190, 280, paint);
 
             paint.setColor(Color.rgb(150, 150, 150));
-            canvas.drawRect(30, 1230, canvas.getWidth() - 50, 1250, paint);
+            canvas.drawRect(30, 290, canvas.getWidth() - 40, 295, paint);
 
             paint.setColor(Color.BLACK);
-            canvas.drawText("Sub Total", 550, 1320, paint);
-            canvas.drawText("Tax 4%", 550, 1390, paint);
+            canvas.drawText("Sub Total", 100, 310, paint);
+            canvas.drawText("Tax 4%", 100, 320, paint);
 
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            canvas.drawText("TOTAL", 550, 1460, paint);
+            canvas.drawText("TOTAL", 100, 335, paint);
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+
+
+
+            /*
+            //
+
+
+
+
+
+
 
             canvas.drawText(String.valueOf(cursor.getInt(6)), 1050, 1320, paint);
             canvas.drawText(String.valueOf(cursor.getInt(6) * 4 / 100), 1050, 1390, paint);
@@ -219,6 +244,7 @@ public class ConvertToPDFSQLActivity extends AppCompatActivity {
             canvas.drawText("Make all check payable to \"Custom Builds\"", 50, 1600, paint);
             paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
 
+             */
             canvas.drawText("Thank you very much", 50, 1680, paint);
             pdfDocument.finishPage(page);
 
